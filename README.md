@@ -1,4 +1,4 @@
-I used google's Gemini AI to implement the fixes, so if there are any issues, feel free to comment. 
+I removed the switch feature which seems to be broken 
 
 
 -----
@@ -62,7 +62,7 @@ This cover entity will work with all standard Home Assistant automations. You ca
 
 ## Support and Contribution
 
-If you run into any issues or have a feature request, please [open an issue on the GitHub issues page](https://www.google.com/search?q=https://github.com/YourGitHubUsername/BUT_blinds_time_control/issues).
+If you run into any issues or have a feature request, please [open an issue on the GitHub issues page](https://github.com/JoergAdler/venetian_blinds_time_control/issues).
 
 ## Acknowledgements
 
