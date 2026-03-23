@@ -14,7 +14,7 @@ class BlindsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
-        return BlindsOptionsFlow(config_entry)
+        return BlindsOptionsFlow()
 
     @callback
     def _get_entity_ids(self, platform="switch"):
