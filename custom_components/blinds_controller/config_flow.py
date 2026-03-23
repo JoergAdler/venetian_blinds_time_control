@@ -56,14 +56,12 @@ class BlindsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class BlindsOptionsFlow(config_entries.OptionsFlow):
     """Handle an options flow for Blinds Controller."""
 
-    def __init__(self, config_entry: config_entries.ConfigEntry):
-        """Initialize options flow."""
-        # --- THIS IS THE FIX ---
-        # The super().__init__() call is now correct, and self.config_entry is assigned.
-        super().__init__()
-        self.config_entry = config_entry
+    def _opt(self, key, default=None):
+        """Helper to get value from options, falling back to data, then default."""
+        return self.config_entry.options.get(
+            key, self.config_entry.data.get(key, default)
+        )
 
-    @callback
     def _get_entity_ids(self, platform="switch"):
         """Return a sorted list of entity IDs for a given platform."""
         return sorted(self.hass.states.async_entity_ids(platform))
@@ -71,24 +69,26 @@ class BlindsOptionsFlow(config_entries.OptionsFlow):
     async def async_step_init(self, user_input=None):
         """Manage the options."""
         if user_input is not None:
-            # Update the existing entry with the new data
             return self.async_create_entry(title="", data=user_input)
 
         all_switches = self._get_entity_ids("switch")
+
+        if not all_switches:
+            return self.async_abort(reason="no_switches_found")
 
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required("ent_name", default=self.config_entry.options.get("ent_name", self.config_entry.data.get("ent_name"))): str,
-                    vol.Required("entity_up", default=self.config_entry.options.get("entity_up", self.config_entry.data.get("entity_up"))): vol.In(all_switches),
-                    vol.Required("entity_down", default=self.config_entry.options.get("entity_down", self.config_entry.data.get("entity_down"))): vol.In(all_switches),
-                    vol.Required("time_up", default=self.config_entry.options.get("time_up", self.config_entry.data.get("time_up"))): vol.All(vol.Coerce(float), vol.Range(min=0)),
-                    vol.Required("time_down", default=self.config_entry.options.get("time_down", self.config_entry.data.get("time_down"))): vol.All(vol.Coerce(float), vol.Range(min=0)),
-                    vol.Optional("tilt_open", default=self.config_entry.options.get("tilt_open", self.config_entry.data.get("tilt_open", 0.0))): vol.All(vol.Coerce(float), vol.Range(min=0)),
-                    vol.Optional("tilt_closed", default=self.config_entry.options.get("tilt_closed", self.config_entry.data.get("tilt_closed", 0.0))): vol.All(vol.Coerce(float), vol.Range(min=0)),
-                    vol.Optional("startup_delay", default=self.config_entry.options.get("startup_delay", self.config_entry.data.get("startup_delay", 0.0))): vol.All(vol.Coerce(float), vol.Range(min=0, max=5)),
-                    vol.Optional("send_stop_at_end", default=self.config_entry.options.get("send_stop_at_end", self.config_entry.data.get("send_stop_at_end", True))): bool,
+                    vol.Required("ent_name", default=self._opt("ent_name")): str,
+                    vol.Required("entity_up", default=self._opt("entity_up")): vol.In(all_switches),
+                    vol.Required("entity_down", default=self._opt("entity_down")): vol.In(all_switches),
+                    vol.Required("time_up", default=self._opt("time_up")): vol.All(vol.Coerce(float), vol.Range(min=0)),
+                    vol.Required("time_down", default=self._opt("time_down")): vol.All(vol.Coerce(float), vol.Range(min=0)),
+                    vol.Optional("tilt_open", default=self._opt("tilt_open", 0.0)): vol.All(vol.Coerce(float), vol.Range(min=0)),
+                    vol.Optional("tilt_closed", default=self._opt("tilt_closed", 0.0)): vol.All(vol.Coerce(float), vol.Range(min=0)),
+                    vol.Optional("startup_delay", default=self._opt("startup_delay", 0.0)): vol.All(vol.Coerce(float), vol.Range(min=0, max=5)),
+                    vol.Optional("send_stop_at_end", default=self._opt("send_stop_at_end", True)): bool,
                 }
             ),
         )
