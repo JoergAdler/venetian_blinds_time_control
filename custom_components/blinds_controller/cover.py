@@ -368,6 +368,7 @@ class BlindsCover(CoverEntity, RestoreEntity):
     async def auto_stop_if_necessary(self):
         """Send stop command if required."""
         if self._send_stop_at_end:
+            await asyncio.sleep(0.5)  # let any pending tasks finish first
             _LOGGER.debug("Auto-stopping cover %s as it reached its final position.", self.name)
             await self._async_handle_command(SERVICE_STOP_COVER)
  
