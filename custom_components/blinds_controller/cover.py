@@ -31,6 +31,8 @@ _LOGGER = logging.getLogger(__name__)
 SERVICE_SET_KNOWN_POSITION = "set_known_position"
 SERVICE_SET_KNOWN_TILT_POSITION = "set_known_tilt_position"
 
+TILT_UPDATE_INTERVAL = 0.02   # seconds — high precision for short tilt travel
+COVER_UPDATE_INTERVAL = 0.1   # seconds — sufficient for long cover travel
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up the blinds cover from a config entry."""
