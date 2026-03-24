@@ -1,5 +1,6 @@
-I removed the switch feature which seems to be broken 
+I removed the switch feature to still be able to correct the cover position
 
+Also I added that when doing any movement the tilt is modified first an then the cover postion.
 
 -----
 
